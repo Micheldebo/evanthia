@@ -46,31 +46,21 @@ document.querySelectorAll('[data-accordion-css-init]').forEach(accordion => {
   });
 });
 
-  // ── Mobile menu ───────────────────────────────────────────
-function initMobileMenu() {
-  if (window.innerWidth >= 992) return;
-  const btn = document.querySelector('[data-menu-button]');
-  const nav = document.querySelector('[data-menu-status]');
-  if (btn && nav) {
-    // Clone to remove any stale listeners from previous calls
-    const fresh = btn.cloneNode(true);
-    btn.replaceWith(fresh);
-    fresh.addEventListener('click', () => {
-      nav.dataset.menuStatus = nav.dataset.menuStatus === 'open' ? 'closed' : 'open';
+ // ── Dropdown toggles (mobile) ─────────────────────────────────────────────
+  // Closes all other open dropdowns when one is opened.
+  // No width check — works on all screen sizes.
+  function initDropdownToggles() {
+    document.querySelectorAll('[data-dropdown-toggle]').forEach(t => {
+      t.addEventListener('click', () => {
+        const isOpen = t.dataset.dropdownToggle === 'open';
+        document.querySelectorAll('[data-dropdown-toggle]').forEach(other => {
+          if (other !== t) other.dataset.dropdownToggle = 'closed';
+        });
+        t.dataset.dropdownToggle = isOpen ? 'closed' : 'open';
+      });
     });
   }
-  document.querySelectorAll('[data-dropdown-toggle]').forEach(t => {
-    t.addEventListener('click', () => {
-      const isOpen = t.dataset.dropdownToggle === 'open';
-      document.querySelectorAll('[data-dropdown-toggle]').forEach(other => {
-        if (other !== t) { other.dataset.dropdownToggle = 'closed'; }
-      });
-      t.dataset.dropdownToggle = isOpen ? 'closed' : 'open';
-    });
-  });
-}
-initMobileMenu();
-window.addEventListener('resize', debounce(initMobileMenu, 200));
+  initDropdownToggles();
 
 // ── Modal ─────────────────────────────────────────────────────────────────
 const modalGroup   = document.querySelector('[data-modal-group-status]');
